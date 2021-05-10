@@ -1,3 +1,4 @@
+use std::borrow::{Borrow, BorrowMut};
 use std::fs;
 use std::path::PathBuf;
 use structopt::clap::AppSettings;
@@ -29,19 +30,24 @@ fn main() {
 
     let args = Cli::from_args();
 
-    let read = match std::fs::read_to_string(&args.path) {
+    let mut read = match std::fs::read_to_string(&args.path) {
         Ok(contents) => contents,
         Err(err) => err.to_string(),
     };
 
-    if args.number {
-        let mut i = 1;
+    if args.number && args.show_ends {
+        for line in number(&mut read).lines() {
+            println!("{}$", line)
+        }
+    } else if args.number {
+        /*let mut i = 1;
         let digits = read.lines().count().to_string().len();
         let spaces = spaces(digits);
         for line in read.lines() {
             println!("{}{:d$}  {}", spaces, i, line, d = digits);
             i += 1;
-        }
+        }*/
+        println!("{}", number(&mut read))
     } else if args.show_ends {
         for line in read.lines() {
             println!("{}$", line)
@@ -83,4 +89,24 @@ fn spaces(digits: usize) -> String {
         5 => " ".to_string(),
         _ => "".to_string(),
     }
+}
+
+fn number(read: &mut String) -> String {
+    let readd = read.clone();
+    let mut i = 1;
+    let digits = &read.lines().count().to_string().len();
+    let spaces = spaces(*digits);
+    let mut redd = String::new();
+    for line in readd.lines() {
+        redd.push_str(spaces.as_str());
+        let s = format!("{:>d$}", &*i.to_string(), d = digits);
+        redd.push_str(&*s);
+        redd.push_str(" ");
+        redd.push_str(line);
+        redd.push_str("\n");
+
+        i += 1;
+    }
+
+    redd
 }
