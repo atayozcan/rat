@@ -107,23 +107,3 @@ fn number(read: &mut String) -> String {
 
     redd
 }
-
-fn number(read: &mut String) -> String {
-    let readd = read.clone();
-    let mut i = 1;
-    let digits = &read.lines().count().to_string().len();
-    let spaces = spaces(*digits);
-    let mut redd = String::new();
-    for line in readd.lines() {
-        redd.push_str(spaces.as_str());
-        let s = format!("{:>d$}", &*i.to_string(), d = digits);
-        redd.push_str(&*s);
-        redd.push_str(" ");
-        redd.push_str(line);
-        redd.push_str("\n");
-
-        i += 1;
-    }
-
-    redd
-}
