@@ -81,27 +81,24 @@ fn generate_completions() {
 }
 
 fn spaces(digits: usize) -> String {
-    match digits {
-        1 => "     ".to_string(),
-        2 => "    ".to_string(),
-        3 => "   ".to_string(),
-        4 => "  ".to_string(),
-        5 => " ".to_string(),
-        _ => "".to_string(),
+    let times = 6 - digits;
+    let mut space = "".to_string();
+    for i in 0..times {
+        space.push_str(" ");
     }
+    space
 }
 
 fn number(read: &mut String) -> String {
     let readd = read.clone();
     let mut i = 1;
     let digits = &read.lines().count().to_string().len();
-    let spaces = spaces(*digits);
     let mut redd = String::new();
     for line in readd.lines() {
-        redd.push_str(spaces.as_str());
+        redd.push_str(spaces(*digits).as_str());
         let s = format!("{:>d$}", &*i.to_string(), d = digits);
         redd.push_str(&*s);
-        redd.push_str(" ");
+        redd.push_str("\t");
         redd.push_str(line);
         redd.push_str("\n");
 
