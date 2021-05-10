@@ -1,31 +1,86 @@
-use structopt::StructOpt;
+use std::fs;
 use std::path::PathBuf;
+use structopt::clap::AppSettings;
+use structopt::clap::Shell;
+use structopt::StructOpt;
 
 #[derive(StructOpt)]
+#[structopt(setting = AppSettings::InferSubcommands)]
 struct Cli {
-	#[structopt(parse(from_os_str))]
-	path: PathBuf,
+    #[structopt(parse(from_os_str))]
+    path: PathBuf,
 
-	#[structopt(short = "c", long)]
-	length: bool,
+    #[structopt(short = "n", long)]
+    number: bool,
+
+    #[structopt(short = "E", long)]
+    show_ends: bool,
 }
 
 fn main() {
-	let path = match std::env::args().nth(1){
-		Some(contents)=> contents,
-		None=>"No path given".to_string()
-	};
+    generate_completions();
 
-	let flags = std::env::args().nth(2);
+    match std::env::args().nth(1) {
+        Some(contents) => contents,
+        None => "No path given".to_string(),
+    };
 
-	let args = Cli::from_args();
+    std::env::args().nth(2);
 
-	let read= match std::fs::read_to_string(&args.path){
-		Ok(contents)=> contents,
-		Err(err)=>{err.to_string()},
-	};
+    let args = Cli::from_args();
 
-	if args.length{
-		println!("{}",read.len())
-	} else { println!("{}",read) }
+    let read = match std::fs::read_to_string(&args.path) {
+        Ok(contents) => contents,
+        Err(err) => err.to_string(),
+    };
+
+    if args.number {
+        let mut i = 1;
+        let digits = read.lines().count().to_string().len();
+        let spaces = spaces(digits);
+        for line in read.lines() {
+            println!("{}{:d$}  {}", spaces, i, line, d = digits);
+            i += 1;
+        }
+    } else if args.show_ends {
+        for line in read.lines() {
+            println!("{}$", line)
+        }
+    } else {
+        println!("{}", read)
+    }
+}
+
+fn generate_completions() {
+    match fs::read(std::env::current_exe().unwrap()) {
+        Ok(..) => return,
+        Err(..) => {
+            Cli::clap().gen_completions(
+                env!("CARGO_PKG_NAME"),
+                Shell::Bash,
+                std::env::current_exe().unwrap(),
+            );
+            Cli::clap().gen_completions(
+                env!("CARGO_PKG_NAME"),
+                Shell::Zsh,
+                std::env::current_exe().unwrap(),
+            );
+            Cli::clap().gen_completions(
+                env!("CARGO_PKG_NAME"),
+                Shell::Fish,
+                std::env::current_exe().unwrap(),
+            );
+        }
+    }
+}
+
+fn spaces(digits: usize) -> String {
+    match digits {
+        1 => "     ".to_string(),
+        2 => "    ".to_string(),
+        3 => "   ".to_string(),
+        4 => "  ".to_string(),
+        5 => " ".to_string(),
+        _ => "".to_string(),
+    }
 }
