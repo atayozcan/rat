@@ -11,7 +11,11 @@ struct Cli {
 }
 
 fn main() {
-	let path = std::env::args().nth(1).expect("no path given");
+	let path = match std::env::args().nth(1){
+		Some(contents)=> contents,
+		None=>"No path given".to_string()
+	};
+
 	let flags = std::env::args().nth(2);
 
 	let args = Cli::from_args();
