@@ -36,22 +36,11 @@ fn main() {
     };
 
     if args.number && args.show_ends {
-        for line in number(&mut read).lines() {
-            println!("{}$", line)
-        }
+        println!("{}", show_ends(&mut number(&mut read)));
     } else if args.number {
-        /*let mut i = 1;
-        let digits = read.lines().count().to_string().len();
-        let spaces = spaces(digits);
-        for line in read.lines() {
-            println!("{}{:d$}  {}", spaces, i, line, d = digits);
-            i += 1;
-        }*/
         println!("{}", number(&mut read))
     } else if args.show_ends {
-        for line in read.lines() {
-            println!("{}$", line)
-        }
+        println!("{}", show_ends(&mut read));
     } else {
         println!("{}", read)
     }
@@ -83,27 +72,34 @@ fn generate_completions() {
 fn spaces(digits: usize) -> String {
     let times = 6 - digits;
     let mut space = "".to_string();
-    for i in 0..times {
-        space.push_str(" ");
+    for _ in 0..times {
+        space.push(' ');
     }
     space
 }
 
 fn number(read: &mut String) -> String {
-    let readd = read.clone();
     let mut i = 1;
+    let mut new_read = String::new();
     let digits = &read.lines().count().to_string().len();
-    let mut redd = String::new();
-    for line in readd.lines() {
-        redd.push_str(spaces(*digits).as_str());
+    for line in read.lines() {
+        new_read.push_str(spaces(*digits).as_str());
         let s = format!("{:>d$}", &*i.to_string(), d = digits);
-        redd.push_str(&*s);
-        redd.push_str("\t");
-        redd.push_str(line);
-        redd.push_str("\n");
-
+        new_read.push_str(&*s);
+        new_read.push('\t');
+        new_read.push_str(line);
+        new_read.push('\n');
         i += 1;
     }
+    new_read
+}
 
-    redd
+fn show_ends(read: &mut String) -> String {
+    let mut new_read = String::new();
+    for line in read.lines() {
+        new_read.push_str(line);
+        new_read.push('$');
+        new_read.push('\n');
+    }
+    new_read
 }
