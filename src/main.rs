@@ -29,34 +29,27 @@ fn main() {
     let mut read = read_to_string(&Cli::from_args().path).unwrap();
 
     match Cli::from_args() {
-        Cli { number: true, .. } => {
-            println!("{}", number(&mut read))
-        }
+        Cli { number: true, .. } => println!("{}", number(&mut read)),
+
         Cli {
             show_ends: true, ..
-        } => {
-            println!("{}", show_ends(&mut read));
-        }
+        } => println!("{}", show_ends(&mut read)),
+
         Cli {
             show_tabs: true, ..
-        } => {
-            println!("{}", show_tabs(&mut read))
-        }
+        } => println!("{}", show_tabs(&mut read)),
+
         Cli {
             squeeze_blank: true,
             ..
-        } => {
-            println!("{}", squeeze_blank(&mut read))
-        }
+        } => println!("{}", squeeze_blank(&mut read)),
+
         Cli {
             number_nonblank: true,
             ..
-        } => {
-            println!("{}", number_nonblank(&mut read))
-        }
-        _ => {
-            println!("{}", read)
-        }
+        } => println!("{}", number_nonblank(&mut read)),
+
+        _ => println!("{}", read),
     }
 }
 
