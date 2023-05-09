@@ -2,7 +2,8 @@
 name = "rat"
 version = "0.1.0"
 authors = ["Atay Özcan <atayozcan@pm.me>"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-structopt = "0.3.21"
+clap = { version = "*", features = ["derive"] }
+anyhow = "*"
